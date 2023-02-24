@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { SignUpDto } from './dtos/signup.dto';
 import { User } from './schemas/user.schema';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private model: Model<User>) {}
 
-  async create(body: CreateUserDto) {
-    const user = await this.model.create({
-      name: body.name,
-      email: body.email,
-      password: body.password,
-    });
+  async create(body: SignUpDto) {
+    return await this.model.create(body);
+  }
 
-    return user;
+  async listUser(condition: any = {}) {
+    return await this.model.find(condition).sort({ created_at: -1 });
+  }
+
+  async findUser(payload: { [index: string]: string }) {
+    return await this.model.findOne(payload);
   }
 }

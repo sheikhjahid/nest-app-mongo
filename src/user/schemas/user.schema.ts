@@ -14,3 +14,7 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', () => {
+  console.log('user created');
+});
