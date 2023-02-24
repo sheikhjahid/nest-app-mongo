@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthMiddleWare } from 'src/middlewares/auth.middleware';
 import { AuthService } from './auth.service';
 import { User, UserSchema } from './schemas/user.schema';
 import { UserController } from './user.controller';
@@ -13,4 +14,8 @@ import { UserService } from './user.service';
   providers: [UserService, AuthService],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleWare).forRoutes('*');
+  }
+}
