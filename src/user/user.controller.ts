@@ -9,6 +9,7 @@ import {
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AuthService } from './auth.service';
+import { currentUser } from './decorators/current-user.decorator';
 import { SigninDto } from './dtos/siginin.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UserDto } from './dtos/user.dto';
@@ -29,10 +30,11 @@ export class UserController {
     return this.userService.listUser();
   }
 
-  //   @Get('whoami')
-  //   getCurrentUser(@currentUser() user: User) {
-  //     return user;
-  //   }
+  @UseGuards(AuthGuard)
+  @Get('whoami')
+  getCurrentUser(@currentUser() user: User) {
+    return user;
+  }
 
   @Post('signup')
   async signup(@Body() body: SignUpDto, @Session() session: any) {

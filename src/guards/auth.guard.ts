@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (!request?.token) {
+    if (!request?.user) {
       throw new ForbiddenException('You are not allowed to access this route.');
     }
 
