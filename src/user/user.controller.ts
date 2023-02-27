@@ -19,7 +19,7 @@ import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 
-// @Serialize(UserDto)
+@Serialize(UserDto)
 @Controller('auth')
 export class UserController {
   constructor(
@@ -53,11 +53,13 @@ export class UserController {
     return user;
   }
 
+  @UseGuards(AuthGuard)
   @Get('signout')
   signout(@Session() session: any) {
     delete session.token;
   }
 
+  @UseGuards(AuthGuard)
   @Put('profile/:id')
   async updateProfile(@Param('id') id: string, @Body() body: UpdateProfileDto) {
     return await this.userService.updateUser(id, body);

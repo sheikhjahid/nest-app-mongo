@@ -4,16 +4,19 @@ import { User } from 'src/user/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Report extends Document {
-  @Prop()
+  @Prop({ required: true })
   title: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop()
+  @Prop({ required: true })
   price: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, default: false })
+  approved: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User.name' })
   user: User;
 }
 

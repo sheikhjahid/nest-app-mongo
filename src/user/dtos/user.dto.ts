@@ -8,6 +8,7 @@ export class UserDto {
   @Expose()
   email: string;
 
+  @Transform(({ obj }) => console.log(obj))
   @Expose()
   report: Report[];
 
