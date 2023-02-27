@@ -6,10 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { ReportModule } from './report/report.module';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 @Module({
-  imports: [MongooseModule.forRootAsync(dbConfig), UserModule],
+  imports: [MongooseModule.forRootAsync(dbConfig), UserModule, ReportModule],
   controllers: [AppController],
   providers: [
     AppService,

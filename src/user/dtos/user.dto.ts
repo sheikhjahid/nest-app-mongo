@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
+import { Report } from 'src/report/schemas/report.schema';
 
 export class UserDto {
   @Expose()
@@ -6,6 +7,9 @@ export class UserDto {
 
   @Expose()
   email: string;
+
+  @Expose()
+  report: Report[];
 
   @Expose()
   token?: string;

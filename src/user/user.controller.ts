@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   Session,
   UseGuards,
 } from '@nestjs/common';
@@ -12,11 +14,12 @@ import { AuthService } from './auth.service';
 import { currentUser } from './decorators/current-user.decorator';
 import { SigninDto } from './dtos/siginin.dto';
 import { SignUpDto } from './dtos/signup.dto';
+import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 
-@Serialize(UserDto)
+// @Serialize(UserDto)
 @Controller('auth')
 export class UserController {
   constructor(
@@ -31,8 +34,8 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('whoami')
-  getCurrentUser(@currentUser() user: User) {
+  @Get('profile')
+  getProfile(@currentUser() user: User) {
     return user;
   }
 
@@ -53,5 +56,10 @@ export class UserController {
   @Get('signout')
   signout(@Session() session: any) {
     delete session.token;
+  }
+
+  @Put('profile/:id')
+  async updateProfile(@Param('id') id: string, @Body() body: UpdateProfileDto) {
+    return await this.userService.updateUser(id, body);
   }
 }
