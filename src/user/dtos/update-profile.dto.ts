@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { Report } from 'src/report/schemas/report.schema';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -14,4 +15,7 @@ export class UpdateProfileDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @IsOptional()
+  report: Report[];
 }
