@@ -8,7 +8,15 @@ export class UserDto {
   @Expose()
   email: string;
 
-  @Transform(({ obj }) => console.log(obj))
+  @Transform(({ obj }) =>
+    obj.report.map((r) => {
+      return {
+        title: r.title,
+        description: r.description,
+        approved: r.approved,
+      };
+    }),
+  )
   @Expose()
   report: Report[];
 

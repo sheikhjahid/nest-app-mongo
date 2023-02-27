@@ -11,7 +11,6 @@ export class ReportService {
 
   async create(payload: CreateReportDto, user: User) {
     const reportModel = new this.model({ ...payload, user: user });
-
     return await reportModel.save();
   }
 
@@ -19,15 +18,11 @@ export class ReportService {
     return await this.model
       .find(condition)
       .sort({ created_at: -1 })
-      .populate('user', null, User.name)
-      .exec();
+      .populate('user');
   }
 
   async findReport(condition: { [index: string]: string } = {}) {
-    return await this.model
-      .findOne(condition)
-      .populate('user', null, User.name)
-      .exec();
+    return await this.model.findOne(condition).populate('user');
   }
 
   async updateReport(id: string, payload: UpdateReportDto) {

@@ -16,7 +16,7 @@ export class Report extends Document {
   @Prop({ required: true, default: false })
   approved: boolean;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User.name' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 }
 

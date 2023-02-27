@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Model } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Report } from 'src/report/schemas/report.schema';
 
 @Schema({ timestamps: true })
@@ -16,9 +16,7 @@ export class User extends Document {
   @Prop({ required: false, default: false })
   admin: boolean;
 
-  @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Report.name' }],
-  })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Report' }] })
   report: Report[];
 }
 

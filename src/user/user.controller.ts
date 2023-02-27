@@ -29,8 +29,8 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('users')
-  list() {
-    return this.userService.listUser();
+  async list() {
+    return await this.userService.listUser();
   }
 
   @UseGuards(AuthGuard)
