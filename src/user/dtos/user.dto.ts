@@ -9,16 +9,19 @@ export class UserDto {
   email: string;
 
   @Transform(({ obj }) =>
-    obj.report.map((r) => {
-      return {
-        title: r.title,
-        description: r.description,
-        approved: r.approved,
-      };
-    }),
+    obj.report != undefined
+      ? obj.report.map((r) => {
+          return {
+            title: r.title,
+            description: r.description,
+            price: r.price,
+            approved: r.approved,
+          };
+        })
+      : [],
   )
   @Expose()
-  report: Report[];
+  report?: Report[];
 
   @Expose()
   token?: string;

@@ -24,7 +24,7 @@ export class UserService {
     return await this.model.findOne(payload).populate('report');
   }
 
-  async updateUser(id: string, body: any) {
+  async updateUser(id: string, body: Partial<UpdateProfileDto>) {
     const userModel = await this.findUser({ _id: id });
     userModel.email = body?.email || userModel.email;
     userModel.name = body?.name || userModel.name;

@@ -17,5 +17,5 @@ export class UpdateProfileDto {
   password: string;
 
   @IsOptional()
-  report: Report[];
+  report: Report;
 }
