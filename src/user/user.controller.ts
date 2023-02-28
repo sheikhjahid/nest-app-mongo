@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -9,9 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Serialize } from 'src/decorators/serialize.decorator';
+import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { AuthService } from './auth.service';
 import { currentUser } from './decorators/current-user.decorator';
+import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SigninDto } from './dtos/siginin.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -63,5 +66,11 @@ export class UserController {
   @Put('profile/:id')
   async updateProfile(@Param('id') id: string, @Body() body: UpdateProfileDto) {
     return await this.userService.updateUser(id, body);
+  }
+
+  @UseGuards(AdminGuard)
+  @Delete('remove-profile')
+  async deleteProfile(@Body() body: DeleteProfileDto) {
+    return await this.userService.deleteUser(body);
   }
 }

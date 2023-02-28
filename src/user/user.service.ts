@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './schemas/user.schema';
@@ -33,5 +34,16 @@ export class UserService {
       userModel.report.push(body.report);
     }
     return await userModel.save();
+  }
+
+  async deleteUser(body: DeleteProfileDto) {
+    const userModel = await this.findUser({ _id: body.id });
+    if (userModel.report.length) {
+      userModel.report.forEach(async (reportModel) => {
+        reportModel.user = null;
+        await reportModel.save();
+      });
+    }
+    return await userModel.remove();
   }
 }
