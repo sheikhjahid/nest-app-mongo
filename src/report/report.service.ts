@@ -16,7 +16,7 @@ export class ReportService {
     files: Array<Express.Multer.File>,
   ) {
     let filePaths = [];
-    if (files.length > 0) {
+    if (files !== undefined && files.length > 0) {
       filePaths = files.map((file) => 'uploads/report/' + file.filename);
     }
 
