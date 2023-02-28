@@ -10,7 +10,13 @@ export class ReportDto {
   title: string;
 
   @Expose()
+  description: string;
+
+  @Expose()
   approved: boolean;
+
+  @Expose()
+  attachments: string[];
 
   @Transform(({ obj }) => {
     return { name: obj.user.name, email: obj.user.email };

@@ -29,14 +29,22 @@ export class ReportService {
   async updateReport(
     id: string,
     payload: Partial<UpdateReportDto>,
-    files: any[] = [],
+    files: Array<Express.Multer.File>,
   ) {
     const reportModel = await this.findReport({ _id: id });
 
     reportModel.title = payload?.title || reportModel.title;
     reportModel.description = payload?.description || reportModel.description;
     reportModel.price = payload?.price || reportModel.price;
-    reportModel.attachments = files;
+    if (files.length > 0) {
+      const formattedFilePaths = files.map(
+        (file) => 'uploads/report/' + file.filename,
+      );
+      reportModel.attachments = [
+        ...reportModel.attachments,
+        ...formattedFilePaths,
+      ];
+    }
 
     return await reportModel.save();
   }

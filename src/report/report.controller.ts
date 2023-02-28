@@ -64,11 +64,7 @@ export class ReportController {
     @Body() body: UpdateReportDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    let filePaths = [];
-    if (files.length) {
-      filePaths = files.map((file) => 'uploads/report/' + file.filename);
-    }
-    return this.service.updateReport(id, body, filePaths);
+    return this.service.updateReport(id, body, files);
   }
 
   @UseGuards(AdminGuard)
