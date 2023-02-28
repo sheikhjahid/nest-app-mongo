@@ -4,6 +4,9 @@ import { User } from 'src/user/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Report extends Document {
+  static deleteMany() {
+    throw new Error('Method not implemented.');
+  }
   @Prop({ required: true })
   title: string;
 
@@ -23,3 +26,5 @@ export class Report extends Document {
 export const ReportSchema = SchemaFactory.createForClass(Report);
 
 ReportSchema.pre('save', () => console.log('saving report'));
+
+ReportSchema.pre('remove', () => console.log('removing report'));

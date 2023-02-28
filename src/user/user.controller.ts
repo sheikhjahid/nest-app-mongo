@@ -83,7 +83,11 @@ export class UserController {
     @Body() body: UpdateProfileDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.userService.updateUser(id, body, file?.filename || null);
+    return await this.userService.updateUser(
+      id,
+      body,
+      file?.filename ? `uploads/${file.filename}` : null,
+    );
   }
 
   @UseGuards(AdminGuard)
