@@ -10,8 +10,21 @@ import { UpdateReportDto } from './dtos/update-report.dto';
 export class ReportService {
   constructor(@InjectModel(Report.name) private model: Model<Report>) {}
 
-  async create(payload: CreateReportDto, user: User) {
-    const reportModel = new this.model({ ...payload, user: user });
+  async create(
+    payload: CreateReportDto,
+    user: User,
+    files: Array<Express.Multer.File>,
+  ) {
+    let filePaths = [];
+    if (files.length > 0) {
+      filePaths = files.map((file) => 'uploads/report/' + file.filename);
+    }
+
+    const reportModel = new this.model({
+      ...payload,
+      user: user,
+      attachments: filePaths,
+    });
     return await reportModel.save();
   }
 

@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { diskStorage, Multer } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -33,13 +33,30 @@ export class ReportController {
     private userService: UserService,
   ) {}
 
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        filename: fileName,
+        destination: './public/uploads/report',
+      }),
+      fileFilter: fileFilter,
+    }),
+  )
   @Post()
-  async createReport(@Body() body: CreateReportDto, @currentUser() user: User) {
-    const report = await this.service.create(body, user);
+  async createReport(
+    @Body() body: CreateReportDto,
+    @currentUser() user: User,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    const report = await this.service.create(body, user, files);
 
-    await this.userService.updateUser(user.id, {
-      report: report,
-    });
+    await this.userService.updateUser(
+      user.id,
+      {
+        report: report,
+      },
+      null,
+    );
 
     return report;
   }

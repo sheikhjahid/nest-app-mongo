@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Expression, Model } from 'mongoose';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -30,7 +30,7 @@ export class UserService {
   async updateUser(
     id: string,
     body: Partial<UpdateProfileDto>,
-    filename: string | null = null,
+    file: Express.Multer.File | null,
   ) {
     const userModel = await this.findUser({ _id: id });
     userModel.email = body?.email || userModel.email;
@@ -38,7 +38,9 @@ export class UserService {
     userModel.password = body?.password
       ? await bcrypt.hash(body.password, 10)
       : userModel.password;
-    userModel.picUrl = filename;
+    if (file) {
+      userModel.picUrl = 'uploads/user/' + file.filename;
+    }
     if (body?.report) {
       userModel.report.push(body.report);
     }
