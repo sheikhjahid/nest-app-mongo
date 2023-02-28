@@ -4,9 +4,6 @@ import { User } from 'src/user/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class Report extends Document {
-  static deleteMany() {
-    throw new Error('Method not implemented.');
-  }
   @Prop({ required: true })
   title: string;
 
@@ -18,6 +15,9 @@ export class Report extends Document {
 
   @Prop({ required: true, default: false })
   approved: boolean;
+
+  @Prop({ required: false, default: null })
+  attachments: string[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;

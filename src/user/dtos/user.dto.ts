@@ -1,7 +1,11 @@
 import { Expose, Transform } from 'class-transformer';
+import { Types } from 'mongoose';
 import { Report } from 'src/report/schemas/report.schema';
 
 export class UserDto {
+  @Expose()
+  id: Types.ObjectId;
+
   @Expose()
   name: string;
 

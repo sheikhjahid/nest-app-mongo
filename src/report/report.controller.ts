@@ -5,18 +5,24 @@ import {
   Param,
   Post,
   Put,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { currentUser } from 'src/user/decorators/current-user.decorator';
 import { User } from 'src/user/schemas/user.schema';
 import { UserService } from 'src/user/user.service';
+import { fileFilter, fileName } from 'src/utils/file-helper';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { ReportDto } from './dtos/report.dto';
-import { UpdateReportDto } from './dtos/update-report.dto';
+import { ApproveReportDto } from './dtos/approve-report.dto';
 import { ReportService } from './report.service';
+import { UpdateReportDto } from './dtos/update-report.dto';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
@@ -43,9 +49,34 @@ export class ReportController {
     return await this.service.listReport();
   }
 
-  @UseGuards(AdminGuard)
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        filename: fileName,
+        destination: './public/uploads/report',
+      }),
+      fileFilter: fileFilter,
+    }),
+  )
   @Put('/:id')
-  async updateReport(@Param('id') id: string, @Body() body: UpdateReportDto) {
-    return await this.service.updateReport(id, body);
+  async updateReport(
+    @Param('id') id: string,
+    @Body() body: UpdateReportDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    let filePaths = [];
+    if (files.length) {
+      filePaths = files.map((file) => 'uploads/report/' + file.filename);
+    }
+    return this.service.updateReport(id, body, filePaths);
+  }
+
+  @UseGuards(AdminGuard)
+  @Put('confirm-approval/:id')
+  async confirmApproval(
+    @Param('id') id: string,
+    @Body() body: ApproveReportDto,
+  ) {
+    return await this.service.confirmReport(id, body);
   }
 }

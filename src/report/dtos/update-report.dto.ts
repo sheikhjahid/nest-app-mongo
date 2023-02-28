@@ -1,6 +1,20 @@
-import { IsBoolean } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class UpdateReportDto {
-  @IsBoolean()
-  approved: boolean;
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @Min(0)
+  @Max(100)
+  @IsNumber()
+  price: string;
+
+  @IsOptional()
+  files: any[];
 }

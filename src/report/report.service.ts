@@ -3,8 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { CreateReportDto } from './dtos/create-report.dto';
-import { UpdateReportDto } from './dtos/update-report.dto';
+import { ApproveReportDto } from './dtos/approve-report.dto';
 import { Report } from './schemas/report.schema';
+import { UpdateReportDto } from './dtos/update-report.dto';
 @Injectable()
 export class ReportService {
   constructor(@InjectModel(Report.name) private model: Model<Report>) {}
@@ -25,7 +26,22 @@ export class ReportService {
     return await this.model.findOne(condition).populate('user');
   }
 
-  async updateReport(id: string, payload: UpdateReportDto) {
+  async updateReport(
+    id: string,
+    payload: Partial<UpdateReportDto>,
+    files: any[] = [],
+  ) {
+    const reportModel = await this.findReport({ _id: id });
+
+    reportModel.title = payload?.title || reportModel.title;
+    reportModel.description = payload?.description || reportModel.description;
+    reportModel.price = payload?.price || reportModel.price;
+    reportModel.attachments = files;
+
+    return await reportModel.save();
+  }
+
+  async confirmReport(id: string, payload: ApproveReportDto) {
     const reportModel = await this.findReport({ _id: id });
     reportModel.approved = payload.approved;
 

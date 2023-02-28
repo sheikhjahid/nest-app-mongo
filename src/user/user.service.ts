@@ -5,6 +5,8 @@ import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { User } from './schemas/user.schema';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const bcrypt = require('bcrypt');
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private model: Model<User>) {}
@@ -33,7 +35,9 @@ export class UserService {
     const userModel = await this.findUser({ _id: id });
     userModel.email = body?.email || userModel.email;
     userModel.name = body?.name || userModel.name;
-    userModel.password = body?.password || userModel.password;
+    userModel.password = body?.password
+      ? await bcrypt.hash(body.password, 10)
+      : userModel.password;
     userModel.picUrl = filename;
     if (body?.report) {
       userModel.report.push(body.report);

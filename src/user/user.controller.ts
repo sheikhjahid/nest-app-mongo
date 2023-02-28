@@ -16,7 +16,7 @@ import { diskStorage } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { fileFilter, fileName, getCSVFile } from 'src/utils/file-helper';
+import { fileFilter, fileName } from 'src/utils/file-helper';
 import { AuthService } from './auth.service';
 import { currentUser } from './decorators/current-user.decorator';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
@@ -71,7 +71,7 @@ export class UserController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './public/uploads',
+        destination: './public/uploads/user',
         filename: fileName,
       }),
       fileFilter: fileFilter,
@@ -86,7 +86,7 @@ export class UserController {
     return await this.userService.updateUser(
       id,
       body,
-      file?.filename ? `uploads/${file.filename}` : null,
+      file?.filename ? `uploads/user/${file.filename}` : null,
     );
   }
 

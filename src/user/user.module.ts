@@ -11,7 +11,7 @@ import { UserService } from './user.service';
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MulterModule.register({
-      dest: './public/uploads',
+      dest: './public/uploads/user',
     }),
   ],
   controllers: [UserController],

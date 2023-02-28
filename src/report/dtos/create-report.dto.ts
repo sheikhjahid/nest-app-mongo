@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateReportDto {
   @IsNotEmpty()
@@ -14,4 +21,7 @@ export class CreateReportDto {
   @Max(100)
   @IsNumber()
   price: string;
+
+  @IsOptional()
+  files: any[];
 }

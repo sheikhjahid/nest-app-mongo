@@ -10,11 +10,6 @@ export const fileFilter = (_, file, callback) => {
 
 export const fileName = (_, file, callback) => {
   const fileExtName = extname(file.originalname);
-  const fileName = new Date().getTime() + '_userpic' + fileExtName;
+  const fileName = new Date().getTime() + fileExtName;
   callback(null, fileName);
-};
-
-export const getCSVFile = (filename: string): string => {
-  const filePath = join(__dirname, '..', '..', 'public/uploads', filename);
-  return filePath;
 };
