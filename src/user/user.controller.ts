@@ -12,9 +12,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { fileFilter, fileName, getCSVFile } from 'src/utils/file-helper';
 import { AuthService } from './auth.service';
 import { currentUser } from './decorators/current-user.decorator';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
@@ -24,7 +26,6 @@ import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
-import { FileValidator } from './validators/file.validator';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -67,12 +68,20 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './public/uploads',
+        filename: fileName,
+      }),
+      fileFilter: fileFilter,
+    }),
+  )
   @Put('profile/:id')
   async updateProfile(
     @Param('id') id: string,
     @Body() body: UpdateProfileDto,
-    @UploadedFile(new FileValidator()) file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.userService.updateUser(id, body, file?.filename || null);
   }

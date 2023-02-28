@@ -8,6 +8,9 @@ export class UserDto {
   @Expose()
   email: string;
 
+  @Expose()
+  picUrl: string;
+
   @Transform(({ obj }) =>
     obj.report != undefined
       ? obj.report.map((r) => {
