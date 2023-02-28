@@ -16,6 +16,9 @@ export class User extends Document {
   @Prop({ required: false, default: false })
   admin: boolean;
 
+  @Prop({ required: false, default: null })
+  picUrl: string;
+
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Report' }] })
   report: Report[];
 }

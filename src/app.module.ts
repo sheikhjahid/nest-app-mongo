@@ -7,10 +7,19 @@ import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ReportModule } from './report/report.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 @Module({
-  imports: [MongooseModule.forRootAsync(dbConfig), UserModule, ReportModule],
+  imports: [
+    MongooseModule.forRootAsync(dbConfig),
+    UserModule,
+    ReportModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,

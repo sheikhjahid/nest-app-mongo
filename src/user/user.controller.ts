@@ -7,8 +7,11 @@ import {
   Post,
   Put,
   Session,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Serialize } from 'src/decorators/serialize.decorator';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -21,6 +24,7 @@ import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
+import { FileValidator } from './validators/file.validator';
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -63,9 +67,14 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
   @Put('profile/:id')
-  async updateProfile(@Param('id') id: string, @Body() body: UpdateProfileDto) {
-    return await this.userService.updateUser(id, body);
+  async updateProfile(
+    @Param('id') id: string,
+    @Body() body: UpdateProfileDto,
+    @UploadedFile(new FileValidator()) file: Express.Multer.File,
+  ) {
+    return await this.userService.updateUser(id, body, file?.filename || null);
   }
 
   @UseGuards(AdminGuard)

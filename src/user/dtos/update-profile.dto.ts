@@ -17,5 +17,8 @@ export class UpdateProfileDto {
   password: string;
 
   @IsOptional()
+  file: any;
+
+  @IsOptional()
   report: Report;
 }
