@@ -6,9 +6,13 @@ import { CreateReportDto } from './dtos/create-report.dto';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { Report } from './schemas/report.schema';
 import { UpdateReportDto } from './dtos/update-report.dto';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class ReportService {
-  constructor(@InjectModel(Report.name) private model: Model<Report>) {}
+  constructor(
+    @InjectModel(Report.name) private model: Model<Report>,
+    private mailService: MailService,
+  ) {}
 
   async create(
     payload: CreateReportDto,
@@ -65,6 +69,17 @@ export class ReportService {
   async confirmReport(id: string, payload: ApproveReportDto) {
     const reportModel = await this.findReport({ _id: id });
     reportModel.approved = payload.approved;
+
+    const confirmMsg = reportModel.approved ? 'Approved' : 'Rejected';
+    await this.mailService.sendMail(
+      reportModel.user.email,
+      `Report ${confirmMsg}`,
+      'confirm-report',
+      {
+        name: reportModel.user.name,
+        approved: confirmMsg,
+      },
+    );
 
     return await reportModel.save();
   }

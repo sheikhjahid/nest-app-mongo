@@ -30,7 +30,15 @@ export class AuthService {
       password: password,
     });
 
-    await this.mailService.signup(newUser);
+    await this.mailService.sendMail(
+      newUser.email,
+      'User Signed Up!!',
+      'signup',
+      {
+        name: newUser.name,
+      },
+    );
+
     return {
       email: newUser.email,
       token,
