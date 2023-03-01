@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { extname, join } from 'path';
+import { extname } from 'path';
 
 export const fileFilter = (_, file, callback) => {
   if (!file.originalname.match(/\.(png)$/)) {

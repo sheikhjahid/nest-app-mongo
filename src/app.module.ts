@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { ReportModule } from './report/report.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailModule } from './mail/mail.module';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 @Module({
@@ -19,6 +20,7 @@ const cookieSession = require('cookie-session');
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    MailModule,
   ],
   controllers: [AppController],
   providers: [

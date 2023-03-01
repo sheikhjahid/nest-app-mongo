@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { MailService } from 'src/mail/mail.service';
 import { SigninDto } from './dtos/siginin.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UserService } from './user.service';
@@ -9,7 +10,10 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = 'SECRET_KEY';
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private mailService: MailService,
+  ) {}
 
   async signup(body: SignUpDto) {
     const user = await this.userService.findUser({ email: body.email });
@@ -26,6 +30,7 @@ export class AuthService {
       password: password,
     });
 
+    await this.mailService.signup(newUser);
     return {
       email: newUser.email,
       token,
