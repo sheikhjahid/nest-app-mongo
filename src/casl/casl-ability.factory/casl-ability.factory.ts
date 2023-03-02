@@ -12,7 +12,7 @@ export class CaslAbilityFactory {
   async createForUser(user: User) {
     const { can, cannot, build } = new AbilityBuilder(Ability);
 
-    if (user.admin) {
+    if (user.role.name === 'admin') {
       can(Permission.Manage, 'all'); // read-write access to everything
     } else {
       can(Permission.Read, 'all'); // read-only access to everything

@@ -13,7 +13,9 @@ export class RoleService {
     return await roleModel.save();
   }
 
-  async find(condition: { [index: string]: string } = {}) {
+  async find(
+    condition: { [index: string]: string } = {},
+  ): Promise<Array<Role>> {
     return await this.model.find(condition).populate('permission');
   }
 }
