@@ -23,6 +23,10 @@ import { ReportDto } from './dtos/report.dto';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { ReportService } from './report.service';
 import { UpdateReportDto } from './dtos/update-report.dto';
+import { PoliciesGuard } from 'src/guards/policies.guard';
+import { checkPolicies } from 'src/decorators/check-permission.decorator';
+import { CreateReportHandler } from 'src/utils/handlers/create-report.handler';
+import { UpdateReportHandler } from 'src/utils/handlers/update-report.handler';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
@@ -43,6 +47,8 @@ export class ReportController {
     }),
   )
   @Post()
+  @UseGuards(PoliciesGuard)
+  @checkPolicies(new CreateReportHandler())
   async createReport(
     @Body() body: CreateReportDto,
     @currentUser() user: User,
@@ -76,6 +82,8 @@ export class ReportController {
     }),
   )
   @Put('/:id')
+  @UseGuards(PoliciesGuard)
+  @checkPolicies(new UpdateReportHandler())
   async updateReport(
     @Param('id') id: string,
     @Body() body: UpdateReportDto,

@@ -10,6 +10,9 @@ import { ReportModule } from './report/report.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MailModule } from './mail/mail.module';
+import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permission/permission.module';
+import { CaslModule } from './casl/casl.module';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 @Module({
@@ -21,6 +24,9 @@ const cookieSession = require('cookie-session');
       rootPath: join(__dirname, '..', 'public'),
     }),
     MailModule,
+    RoleModule,
+    PermissionModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [

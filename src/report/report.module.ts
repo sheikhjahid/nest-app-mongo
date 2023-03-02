@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
+import { CaslModule } from 'src/casl/casl.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UserModule } from 'src/user/user.module';
 import { ReportController } from './report.controller';
@@ -10,6 +11,7 @@ import { Report, ReportSchema } from './schemas/report.schema';
   imports: [
     UserModule,
     MailModule,
+    CaslModule,
     MongooseModule.forFeature([{ name: Report.name, schema: ReportSchema }]),
     MulterModule.register({
       dest: './public/uploads/report',
