@@ -28,6 +28,8 @@ import { CheckPolicies } from 'src/decorators/check-permission.decorator';
 import { CreateReportHandler } from 'src/utils/handlers/create-report.handler';
 import { UpdateReportHandler } from 'src/utils/handlers/update-report.handler';
 import { DeleteReportHandler } from 'src/utils/handlers/delete-report.handler';
+import { FindReportHandler } from 'src/utils/handlers/find-report.handler';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
@@ -38,6 +40,8 @@ export class ReportController {
     private userService: UserService,
   ) {}
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new CreateReportHandler())
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
@@ -48,8 +52,6 @@ export class ReportController {
     }),
   )
   @Post()
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies(new CreateReportHandler())
   async createReport(
     @Body() body: CreateReportDto,
     @currentUser() user: User,
@@ -68,11 +70,22 @@ export class ReportController {
     return report;
   }
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new FindReportHandler())
   @Get()
   async listReports() {
     return await this.reportService.listReport();
   }
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new FindReportHandler())
+  @Get('/:id')
+  async findReport(@Param('id') id: string) {
+    return await this.reportService.findReport({ _id: id });
+  }
+
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new UpdateReportHandler())
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
@@ -83,24 +96,24 @@ export class ReportController {
     }),
   )
   @Put('/:id')
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies(new UpdateReportHandler())
   async updateReport(
     @Param('id') id: string,
     @Body() body: UpdateReportDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    console.log(body);
     return this.reportService.updateReport(id, body, files);
   }
 
-  @Delete('/:id')
+  @UseGuards(AdminGuard)
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new DeleteReportHandler())
+  @Delete('/:id')
   async deleteReport(@Param('id') id: string) {
-    return id;
     return await this.reportService.deleteReport(id);
   }
 
+  @UseGuards(AdminGuard)
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new UpdateReportHandler())
   @Put('confirm-approval/:id')

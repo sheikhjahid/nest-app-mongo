@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { dbConfig } from 'db/dbConfig';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ReportModule } from './report/report.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -13,6 +13,7 @@ import { MailModule } from './mail/mail.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { CaslModule } from './casl/casl.module';
+import { PoliciesGuard } from './guards/policies.guard';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 @Module({
@@ -36,6 +37,10 @@ const cookieSession = require('cookie-session');
       useValue: new ValidationPipe({
         whitelist: true,
       }),
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PoliciesGuard,
     },
   ],
 })

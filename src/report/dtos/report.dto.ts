@@ -18,9 +18,7 @@ export class ReportDto {
   @Expose()
   attachments: string[];
 
-  @Transform(({ obj }) => {
-    return { name: obj.user.name, email: obj.user.email };
-  })
+  @Transform(({ obj }) => obj.user)
   @Expose()
   user: User;
 }

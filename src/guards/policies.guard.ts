@@ -35,7 +35,7 @@ export class PoliciesGuard implements CanActivate {
 
     if (policyAbilityCheck === false) {
       throw new ForbiddenException(
-        'This user is not allowed to perform this action.',
+        'You are not allowed to perform this action.',
       );
     }
 
