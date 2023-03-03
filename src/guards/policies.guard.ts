@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
   AppAbility,
@@ -24,9 +29,17 @@ export class PoliciesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
     const ability = await this.caslAbilityFactory.createForUser(user);
 
-    return policyHandlers.every((handler) =>
+    const policyAbilityCheck = policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability),
     );
+
+    if (policyAbilityCheck === false) {
+      throw new ForbiddenException(
+        'This user is not allowed to perform this action.',
+      );
+    }
+
+    return true;
   }
 
   private execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {

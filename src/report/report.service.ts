@@ -83,4 +83,9 @@ export class ReportService {
 
     return await reportModel.save();
   }
+
+  async deleteReport(id: string) {
+    const reportModel = await this.findReport({ _id: id });
+    return await reportModel.remove();
+  }
 }

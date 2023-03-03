@@ -45,12 +45,7 @@ export class RolePermission implements Seeder {
       },
       {
         name: 'customer',
-        permission: [
-          permissions[1],
-          permissions[2],
-          permissions[3],
-          permissions[4],
-        ],
+        permission: [permissions[1], permissions[2], permissions[3]],
       },
     ]);
 
@@ -59,7 +54,7 @@ export class RolePermission implements Seeder {
       name: 'Admin',
       email: 'admin+sc@test.com',
       password: password,
-      role: roles[0]._id,
+      role: roles[0],
     });
   }
 

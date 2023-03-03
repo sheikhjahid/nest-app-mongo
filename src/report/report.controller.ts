@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +13,6 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
-import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { currentUser } from 'src/user/decorators/current-user.decorator';
 import { User } from 'src/user/schemas/user.schema';
@@ -27,11 +27,7 @@ import { PoliciesGuard } from 'src/guards/policies.guard';
 import { CheckPolicies } from 'src/decorators/check-permission.decorator';
 import { CreateReportHandler } from 'src/utils/handlers/create-report.handler';
 import { UpdateReportHandler } from 'src/utils/handlers/update-report.handler';
-import {
-  AppAbility,
-  CaslAbilityFactory,
-} from 'src/casl/casl-ability.factory/casl-ability.factory';
-import { Report, ReportSchema } from './schemas/report.schema';
+import { DeleteReportHandler } from 'src/utils/handlers/delete-report.handler';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
@@ -53,7 +49,7 @@ export class ReportController {
   )
   @Post()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can('create', Report))
+  @CheckPolicies(new CreateReportHandler())
   async createReport(
     @Body() body: CreateReportDto,
     @currentUser() user: User,
@@ -88,7 +84,7 @@ export class ReportController {
   )
   @Put('/:id')
   @UseGuards(PoliciesGuard)
-  // @checkPolicies(new UpdateReportHandler())
+  @CheckPolicies(new UpdateReportHandler())
   async updateReport(
     @Param('id') id: string,
     @Body() body: UpdateReportDto,
@@ -97,8 +93,16 @@ export class ReportController {
     return this.reportService.updateReport(id, body, files);
   }
 
-  @UseGuards(AdminGuard, PoliciesGuard)
-  // @checkPolicies(new UpdateReportHandler())
+  @Delete('/:id')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new DeleteReportHandler())
+  async deleteReport(@Param('id') id: string) {
+    return id;
+    return await this.reportService.deleteReport(id);
+  }
+
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new UpdateReportHandler())
   @Put('confirm-approval/:id')
   async confirmApproval(
     @Param('id') id: string,

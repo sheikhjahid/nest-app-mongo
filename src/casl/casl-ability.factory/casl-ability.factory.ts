@@ -29,13 +29,20 @@ export class CaslAbilityFactory {
       const permissionArr = role[0].permission.map((p) => p.name);
 
       permissionArr.forEach((permission) => {
-        if (permission === 'update') {
-          can(permission, Report, { user: user._id });
+        if (user.role.name === 'admin') {
+          can(permission, 'all');
         }
-        if (permission === 'delete') {
-          cannot(permission, Report, { approved: true });
+        if (user.role.name === 'customer') {
+          if (permission === 'read') {
+            can(permission, Report, { user: user.id });
+          }
+          if (permission === 'update') {
+            can(permission, Report, { user: user.id });
+          }
+          if (permission === 'delete') {
+            cannot(permission, Report, { approved: true });
+          }
         }
-        can(permission, 'all');
       });
     }
 
