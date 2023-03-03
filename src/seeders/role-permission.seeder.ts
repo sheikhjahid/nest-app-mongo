@@ -41,14 +41,15 @@ export class RolePermission implements Seeder {
     const roles = await this.roleModel.insertMany([
       {
         name: 'admin',
-        permission: [permissions[0]._id],
+        permission: [permissions[0]],
       },
       {
         name: 'customer',
         permission: [
-          permissions[1]._id,
-          permissions[2]._id,
-          permissions[3]._id,
+          permissions[1],
+          permissions[2],
+          permissions[3],
+          permissions[4],
         ],
       },
     ]);

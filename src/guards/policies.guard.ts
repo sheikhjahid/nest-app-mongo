@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
   AppAbility,
@@ -7,6 +7,7 @@ import {
 import { CHECK_POLICIES_KEY } from 'src/decorators/check-permission.decorator';
 import { PolicyHandler } from 'src/utils/handlers/policy-handler';
 
+@Injectable()
 export class PoliciesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,

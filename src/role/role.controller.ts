@@ -16,6 +16,6 @@ export class RoleController {
 
   @Get()
   async list() {
-    return await this.service.find({});
+    return await this.service.find();
   }
 }

@@ -24,16 +24,21 @@ import { ApproveReportDto } from './dtos/approve-report.dto';
 import { ReportService } from './report.service';
 import { UpdateReportDto } from './dtos/update-report.dto';
 import { PoliciesGuard } from 'src/guards/policies.guard';
-import { checkPolicies } from 'src/decorators/check-permission.decorator';
+import { CheckPolicies } from 'src/decorators/check-permission.decorator';
 import { CreateReportHandler } from 'src/utils/handlers/create-report.handler';
 import { UpdateReportHandler } from 'src/utils/handlers/update-report.handler';
+import {
+  AppAbility,
+  CaslAbilityFactory,
+} from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { Report, ReportSchema } from './schemas/report.schema';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
 @Controller('report')
 export class ReportController {
   constructor(
-    private service: ReportService,
+    private reportService: ReportService,
     private userService: UserService,
   ) {}
 
@@ -48,13 +53,13 @@ export class ReportController {
   )
   @Post()
   @UseGuards(PoliciesGuard)
-  @checkPolicies(new CreateReportHandler())
+  @CheckPolicies((ability: AppAbility) => ability.can('create', Report))
   async createReport(
     @Body() body: CreateReportDto,
     @currentUser() user: User,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    const report = await this.service.create(body, user, files);
+    const report = await this.reportService.create(body, user, files);
 
     await this.userService.updateUser(
       user.id,
@@ -69,7 +74,7 @@ export class ReportController {
 
   @Get()
   async listReports() {
-    return await this.service.listReport();
+    return await this.reportService.listReport();
   }
 
   @UseInterceptors(
@@ -83,21 +88,22 @@ export class ReportController {
   )
   @Put('/:id')
   @UseGuards(PoliciesGuard)
-  @checkPolicies(new UpdateReportHandler())
+  // @checkPolicies(new UpdateReportHandler())
   async updateReport(
     @Param('id') id: string,
     @Body() body: UpdateReportDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.service.updateReport(id, body, files);
+    return this.reportService.updateReport(id, body, files);
   }
 
-  @UseGuards(AdminGuard)
+  @UseGuards(AdminGuard, PoliciesGuard)
+  // @checkPolicies(new UpdateReportHandler())
   @Put('confirm-approval/:id')
   async confirmApproval(
     @Param('id') id: string,
     @Body() body: ApproveReportDto,
   ) {
-    return await this.service.confirmReport(id, body);
+    return await this.reportService.confirmReport(id, body);
   }
 }
