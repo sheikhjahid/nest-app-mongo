@@ -1,6 +1,7 @@
 import { Expose, Transform } from 'class-transformer';
 import { Types } from 'mongoose';
 import { Report } from 'src/report/schemas/report.schema';
+import { Role } from 'src/role/schemas/role.schema';
 
 export class UserDto {
   @Expose()
@@ -29,6 +30,10 @@ export class UserDto {
   )
   @Expose()
   report?: Report[];
+
+  @Transform(({ obj }) => obj.role)
+  @Expose()
+  role?: Role;
 
   @Expose()
   token?: string;

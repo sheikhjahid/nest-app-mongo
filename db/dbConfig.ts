@@ -4,7 +4,11 @@ export const dbConfig = {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env.${
+        process.env.NODE_ENV === undefined
+          ? 'development'
+          : process.env.NODE_ENV
+      }`,
     }),
   ],
   inject: [ConfigService],

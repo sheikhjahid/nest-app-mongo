@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +13,6 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Serialize } from 'src/decorators/serialize.decorator';
-import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { currentUser } from 'src/user/decorators/current-user.decorator';
 import { User } from 'src/user/schemas/user.schema';
@@ -23,16 +23,25 @@ import { ReportDto } from './dtos/report.dto';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { ReportService } from './report.service';
 import { UpdateReportDto } from './dtos/update-report.dto';
+import { PoliciesGuard } from 'src/guards/policies.guard';
+import { CheckPolicies } from 'src/decorators/check-permission.decorator';
+import { CreateReportHandler } from 'src/utils/handlers/create-report.handler';
+import { UpdateReportHandler } from 'src/utils/handlers/update-report.handler';
+import { DeleteReportHandler } from 'src/utils/handlers/delete-report.handler';
+import { FindReportHandler } from 'src/utils/handlers/find-report.handler';
+import { AdminGuard } from 'src/guards/admin.guard';
 
 @Serialize(ReportDto)
 @UseGuards(AuthGuard)
 @Controller('report')
 export class ReportController {
   constructor(
-    private service: ReportService,
+    private reportService: ReportService,
     private userService: UserService,
   ) {}
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new CreateReportHandler())
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
@@ -48,7 +57,7 @@ export class ReportController {
     @currentUser() user: User,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    const report = await this.service.create(body, user, files);
+    const report = await this.reportService.create(body, user, files);
 
     await this.userService.updateUser(
       user.id,
@@ -61,11 +70,22 @@ export class ReportController {
     return report;
   }
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new FindReportHandler())
   @Get()
   async listReports() {
-    return await this.service.listReport();
+    return await this.reportService.listReport();
   }
 
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new FindReportHandler())
+  @Get('/:id')
+  async findReport(@Param('id') id: string) {
+    return await this.reportService.findReport({ _id: id });
+  }
+
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new UpdateReportHandler())
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: diskStorage({
@@ -81,15 +101,26 @@ export class ReportController {
     @Body() body: UpdateReportDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.service.updateReport(id, body, files);
+    console.log(body);
+    return this.reportService.updateReport(id, body, files);
   }
 
   @UseGuards(AdminGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new DeleteReportHandler())
+  @Delete('/:id')
+  async deleteReport(@Param('id') id: string) {
+    return await this.reportService.deleteReport(id);
+  }
+
+  @UseGuards(AdminGuard)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new UpdateReportHandler())
   @Put('confirm-approval/:id')
   async confirmApproval(
     @Param('id') id: string,
     @Body() body: ApproveReportDto,
   ) {
-    return await this.service.confirmReport(id, body);
+    return await this.reportService.confirmReport(id, body);
   }
 }

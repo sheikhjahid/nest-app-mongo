@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Expression, Model } from 'mongoose';
+import { RoleService } from 'src/role/role.service';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SignUpDto } from './dtos/signup.dto';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
@@ -9,10 +10,15 @@ import { User } from './schemas/user.schema';
 const bcrypt = require('bcrypt');
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private model: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private model: Model<User>,
+    private roleService: RoleService,
+  ) {}
 
   async create(body: SignUpDto) {
     const userModel = await new this.model(body);
+    const role = await this.roleService.find({ name: 'customer' });
+    userModel.role = role[0];
     return await userModel.save();
   }
 
@@ -20,11 +26,11 @@ export class UserService {
     return await this.model
       .find(condition)
       .sort({ created_at: -1 })
-      .populate('report');
+      .populate(['report', 'role']);
   }
 
   async findUser(payload: { [index: string]: string }) {
-    return await this.model.findOne(payload).populate('report');
+    return await this.model.findOne(payload).populate(['report', 'role']);
   }
 
   async updateUser(

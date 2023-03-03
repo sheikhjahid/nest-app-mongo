@@ -46,7 +46,7 @@ export class ReportService {
   async updateReport(
     id: string,
     payload: Partial<UpdateReportDto>,
-    files: Array<Express.Multer.File>,
+    files: Array<Express.Multer.File> | [] = [],
   ) {
     const reportModel = await this.findReport({ _id: id });
 
@@ -82,5 +82,10 @@ export class ReportService {
     );
 
     return await reportModel.save();
+  }
+
+  async deleteReport(id: string) {
+    const reportModel = await this.findReport({ _id: id });
+    return await reportModel.remove();
   }
 }

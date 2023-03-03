@@ -11,7 +11,10 @@ export class AdminGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (request?.user?.admin === undefined || request?.user?.admin === false) {
+    if (
+      request?.user?.role === undefined ||
+      request?.user?.role.name !== 'admin'
+    ) {
       throw new ForbiddenException('Only admin user can access this route.');
     }
     return true;
