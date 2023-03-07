@@ -19,7 +19,7 @@ export class CaslAbilityFactory {
   constructor(private roleService: RoleService) {}
 
   async createForUser(user: User) {
-    const { can, cannot, build } = new AbilityBuilder(
+    const { can, build } = new AbilityBuilder(
       Ability as AbilityClass<AppAbility>,
     );
 
@@ -39,8 +39,8 @@ export class CaslAbilityFactory {
           if (permission === 'update') {
             can(permission, Report, { user: user.id });
           }
-          if (permission === 'delete') {
-            cannot(permission, Report, { approved: true });
+          if (permission === 'create') {
+            can(permission, Report);
           }
         }
       });

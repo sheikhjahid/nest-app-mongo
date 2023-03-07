@@ -105,16 +105,16 @@ export class ReportController {
     return this.reportService.updateReport(id, body, files);
   }
 
-  @UseGuards(AdminGuard)
   @UseGuards(PoliciesGuard)
+  @UseGuards(AdminGuard)
   @CheckPolicies(new DeleteReportHandler())
   @Delete('/:id')
   async deleteReport(@Param('id') id: string) {
     return await this.reportService.deleteReport(id);
   }
 
-  @UseGuards(AdminGuard)
   @UseGuards(PoliciesGuard)
+  @UseGuards(AdminGuard)
   @CheckPolicies(new UpdateReportHandler())
   @Put('confirm-approval/:id')
   async confirmApproval(
