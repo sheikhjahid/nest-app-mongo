@@ -40,7 +40,10 @@ export class AuthService {
     );
 
     return {
-      email: newUser.email,
+      user: {
+        name: newUser.name,
+        email: newUser.email,
+      },
       token,
     };
   }
@@ -54,13 +57,16 @@ export class AuthService {
     }
 
     if (!user || checkPassword === false) {
-      throw new BadRequestException('Invalid Credentials');
+      throw new BadRequestException('User does not exists.');
     }
 
     const token = await this.generateToken(body.email);
 
     return {
-      email: user.email,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
       token,
     };
   }

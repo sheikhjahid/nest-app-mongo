@@ -25,7 +25,11 @@ export class AuthMiddleWare implements NestMiddleware {
   constructor(private userService: UserService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const token = req.session?.token;
+    let token = req.session.token;
+    const headers = req.get('Authorization');
+    if (headers) {
+      token = headers.split(' ')[1];
+    }
     if (token) {
       const tokenDetails = await jwt.verify(token, JWT_SECRET);
       const user = await this.userService.findUser({
