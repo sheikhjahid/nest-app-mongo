@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
+import { LoggerModule } from 'src/logger/logger.module';
 import { MailModule } from 'src/mail/mail.module';
 import { AuthMiddleWare } from 'src/middlewares/auth.middleware';
 import { RoleModule } from 'src/role/role.module';
@@ -11,6 +12,7 @@ import { UserService } from './user.service';
 
 @Module({
   imports: [
+    LoggerModule,
     MailModule,
     RoleModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),

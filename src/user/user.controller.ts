@@ -35,7 +35,7 @@ export class UserController {
     private userService: UserService,
   ) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Get('users')
   async list() {
     return await this.userService.listUser();
@@ -86,7 +86,7 @@ export class UserController {
     return await this.userService.updateUser(id, body, file);
   }
 
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Delete('remove-profile')
   async deleteProfile(@Body() body: DeleteProfileDto) {
     return await this.userService.deleteUser(body);

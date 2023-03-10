@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Expression, Model } from 'mongoose';
+import { Model } from 'mongoose';
+import { LoggerService } from 'src/logger/logger.service';
 import { RoleService } from 'src/role/role.service';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { SignUpDto } from './dtos/signup.dto';
@@ -13,7 +14,10 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private model: Model<User>,
     private roleService: RoleService,
-  ) {}
+    private loggerService: LoggerService,
+  ) {
+    this.loggerService.setContext('UserService');
+  }
 
   async create(body: SignUpDto) {
     const userModel = await new this.model(body);
@@ -23,6 +27,7 @@ export class UserService {
   }
 
   async listUser(condition: any = {}) {
+    // this.loggerService.customLog();
     return await this.model
       .find(condition)
       .sort({ created_at: -1 })

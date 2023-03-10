@@ -101,7 +101,6 @@ export class ReportController {
     @Body() body: UpdateReportDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    console.log(body);
     return this.reportService.updateReport(id, body, files);
   }
 
