@@ -16,4 +16,8 @@ export class RoleService {
   async find(condition: { [index: string]: string } = {}): Promise<Role[]> {
     return await this.model.find(condition).populate('permission');
   }
+
+  async findOne(condition: { [index: string]: string }): Promise<Role> {
+    return await this.model.findOne(condition);
+  }
 }

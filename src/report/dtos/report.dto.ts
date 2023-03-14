@@ -16,6 +16,9 @@ export class ReportDto {
   approved: boolean;
 
   @Expose()
+  price: string;
+
+  @Expose()
   attachments: string[];
 
   @Transform(({ obj }) => {

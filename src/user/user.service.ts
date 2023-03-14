@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { LoggerService } from 'src/logger/logger.service';
@@ -21,29 +21,42 @@ export class UserService {
 
   async create(body: SignUpDto) {
     const userModel = await new this.model(body);
-    const role = await this.roleService.find({ name: 'customer' });
-    userModel.role = role[0];
+    const role = await this.roleService.findOne({ name: 'customer' });
+    userModel.role = role;
     return await userModel.save();
   }
 
-  async listUser(condition: any = {}) {
-    // this.loggerService.customLog();
-    return await this.model
-      .find(condition)
+  async listUser(user: User) {
+    const role = await this.roleService.findOne({ name: 'admin' });
+    const adminUser = await this.model.findOne({ role: role.id });
+
+    const users = await this.model
+      .find({ _id: { $nin: [adminUser.id, user.id] } })
       .sort({ created_at: -1 })
       .populate(['report', 'role']);
+
+    return users;
   }
 
   async findUser(payload: { [index: string]: string }) {
-    return await this.model.findOne(payload).populate(['report', 'role']);
+    const user = await this.model.findOne(payload).populate(['report', 'role']);
+
+    return user;
   }
 
   async updateUser(
-    id: string,
+    id: string = null,
     body: Partial<UpdateProfileDto>,
     file: Express.Multer.File | null,
   ) {
-    const userModel = await this.findUser({ _id: id });
+    let userModel: User;
+    if (id) {
+      userModel = await this.findUser({ _id: id });
+    }
+    if (body?.email) {
+      userModel = await this.findUser({ email: body.email });
+    }
+
     userModel.email = body?.email || userModel.email;
     userModel.name = body?.name || userModel.name;
     userModel.password = body?.password
@@ -59,7 +72,7 @@ export class UserService {
   }
 
   async deleteUser(body: DeleteProfileDto) {
-    const userModel = await this.findUser({ _id: body.id });
+    const userModel = await this.findUser({ email: body.email });
     if (userModel.report.length) {
       userModel.report.forEach(async (reportModel) => {
         reportModel.user = null;

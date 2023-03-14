@@ -73,8 +73,8 @@ export class ReportController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies(new FindReportHandler())
   @Get()
-  async listReports() {
-    return await this.reportService.listReport();
+  async listReports(@currentUser() user: User) {
+    return await this.reportService.listReport(user);
   }
 
   @UseGuards(PoliciesGuard)

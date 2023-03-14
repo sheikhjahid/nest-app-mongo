@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Put,
   Session,
@@ -37,8 +36,8 @@ export class UserController {
 
   @UseGuards(AuthGuard, AdminGuard)
   @Get('users')
-  async list() {
-    return await this.userService.listUser();
+  async list(@currentUser() user: User) {
+    return await this.userService.listUser(user);
   }
 
   @UseGuards(AuthGuard)
@@ -77,13 +76,12 @@ export class UserController {
       fileFilter: fileFilter,
     }),
   )
-  @Put('profile/:id')
+  @Put('profile')
   async updateProfile(
-    @Param('id') id: string,
     @Body() body: UpdateProfileDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.userService.updateUser(id, body, file);
+    return await this.userService.updateUser(null, body, file);
   }
 
   @UseGuards(AuthGuard, AdminGuard)
