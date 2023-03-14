@@ -43,6 +43,8 @@ export class AuthService {
       user: {
         name: newUser.name,
         email: newUser.email,
+        picUrl: newUser.picUrl,
+        role: newUser.role.name,
       },
       token,
     };
@@ -66,6 +68,8 @@ export class AuthService {
       user: {
         name: user.name,
         email: user.email,
+        picUrl: user.picUrl,
+        role: user.role.name,
       },
       token,
     };

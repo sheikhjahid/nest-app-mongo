@@ -32,11 +32,15 @@ export class ReportService {
     return await reportModel.save();
   }
 
-  async listReport(condition: any = {}) {
-    return await this.model
-      .find(condition)
-      .sort({ created_at: -1 })
-      .populate('user');
+  async listReport(user: User) {
+    if (user.role.name === 'admin') {
+      return await this.model
+        .find({})
+        .sort({ created_at: -1 })
+        .populate('user');
+    }
+
+    return user.report;
   }
 
   async findReport(condition: { [index: string]: string } = {}) {
